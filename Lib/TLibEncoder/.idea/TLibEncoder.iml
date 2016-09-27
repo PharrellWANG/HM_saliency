@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="CPP_MODULE" version="4">
+  <component name="NewModuleRootManager">
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/SyntaxElementWriter.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/WeightPredAnalysis.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/TEncCavlc.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/TEncTop.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/TEncRateCtrl.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/TEncSampleAdaptiveOffset.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/NALwrite.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/TEncRateCtrl.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/TEncTop.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/TEncCfg.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/TEncBinCoderCABACCounter.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/SEIEncoder.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/TEncCu.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/TEncBinCoderCABAC.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/TEncPreanalyzer.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/NALwrite.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/TEncAnalyze.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/CMakeLists.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/SEIEncoder.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/TEncSampleAdaptiveOffset.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/SyntaxElementWriter.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/TEncEntropy.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/TEncEntropy.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/TEncSearch.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/TEncPic.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/TEncGOP.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/TEncPic.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/TEncSbac.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/TEncSlice.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/SEIwrite.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/TEncBinCoder.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/SEIwrite.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/WeightPredAnalysis.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/TEncCu.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/TEncGOP.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/TEncSearch.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/TEncCavlc.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/TEncBinCoderCABAC.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/TEncSbac.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/AnnexBwrite.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/TEncSlice.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/TEncPreanalyzer.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/TEncBinCoderCABACCounter.h" isTestSource="false" />
+    </content>
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module-library">
+      <library name="Header Search Paths">
+        <CLASSES>
+          <root url="file:///usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed" />
+          <root url="file:///usr/lib/gcc/x86_64-linux-gnu/4.8/include" />
+          <root url="file:///usr/include" />
+          <root url="file:///usr/local/include" />
+          <root url="file://$MODULE_DIR$/.." />
+        </CLASSES>
+        <SOURCES>
+          <root url="file:///usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed" />
+          <root url="file:///usr/lib/gcc/x86_64-linux-gnu/4.8/include" />
+          <root url="file:///usr/include" />
+          <root url="file:///usr/local/include" />
+          <root url="file://$MODULE_DIR$/.." />
+        </SOURCES>
+        <excluded>
+          <root url="file://$MODULE_DIR$" />
+        </excluded>
+      </library>
+    </orderEntry>
+  </component>
+</module>

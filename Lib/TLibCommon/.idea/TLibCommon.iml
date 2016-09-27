@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="CPP_MODULE" version="4">
+  <component name="NewModuleRootManager">
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/TComPrediction.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/TComRdCostWeightPrediction.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/TComCABACTables.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/TComPrediction.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/TComRom.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Debug.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/TComPattern.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/TComList.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Debug.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/TComInterpolationFilter.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/CommonDef.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/TComWeightPrediction.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/TComDataCU.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/SEI.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/TypeDef.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/TComPic.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/TComLoopFilter.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/TComMotionInfo.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/TComPicYuv.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/AccessUnit.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/TComPic.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/TComMv.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/TComCABACTables.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/TComCodingStatistics.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/ContextTables.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/TComInterpolationFilter.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/TComTrQuant.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/TComWeightPrediction.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/ContextModel.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/TComTU.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/NAL.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/TComTrQuant.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/TComRdCost.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/TComPicSym.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/CMakeLists.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/TComPicYuv.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/TComRdCost.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/ContextModel3DBuffer.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/TComRdCostWeightPrediction.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/TComRom.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/TComSlice.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/SEI.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/TComBitStream.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/TComBitCounter.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/TComBitStream.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/TComChromaFormat.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/TComChromaFormat.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/TComHash.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/TComTU.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/TComSampleAdaptiveOffset.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/TComYuv.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/TComDataCU.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/ContextModel3DBuffer.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/TComMotionInfo.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/TComRectangle.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/TComPicSym.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/TComSlice.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/TComHash.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/TComSampleAdaptiveOffset.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/TComLoopFilter.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/TComPicYuvMD5.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/TComPattern.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/ContextModel.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/TComYuv.h" isTestSource="false" />
+    </content>
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module-library">
+      <library name="Header Search Paths">
+        <CLASSES>
+          <root url="file:///usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed" />
+          <root url="file:///usr/lib/gcc/x86_64-linux-gnu/4.8/include" />
+          <root url="file:///usr/include" />
+          <root url="file:///usr/local/include" />
+          <root url="file://$MODULE_DIR$/.." />
+        </CLASSES>
+        <SOURCES>
+          <root url="file:///usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed" />
+          <root url="file:///usr/lib/gcc/x86_64-linux-gnu/4.8/include" />
+          <root url="file:///usr/include" />
+          <root url="file:///usr/local/include" />
+          <root url="file://$MODULE_DIR$/.." />
+        </SOURCES>
+        <excluded>
+          <root url="file://$MODULE_DIR$" />
+        </excluded>
+      </library>
+    </orderEntry>
+  </component>
+</module>

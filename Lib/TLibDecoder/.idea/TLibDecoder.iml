@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="CPP_MODULE" version="4">
+  <component name="NewModuleRootManager">
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/TDecBinCoderCABAC.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/TDecEntropy.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/SyntaxElementParser.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/TDecSlice.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/SEIread.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/TDecGop.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/AnnexBread.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/NALread.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/TDecCAVLC.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/TDecSbac.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/TDecTop.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/SyntaxElementParser.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/TDecTop.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/TDecBinCoder.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/TDecCAVLC.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/AnnexBread.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/SEIread.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/TDecBinCoderCABAC.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/CMakeLists.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/NALread.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/TDecSbac.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/TDecSlice.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/TDecCu.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/TDecCu.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/TDecEntropy.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/TDecGop.h" isTestSource="false" />
+    </content>
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module-library">
+      <library name="Header Search Paths">
+        <CLASSES>
+          <root url="file:///usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed" />
+          <root url="file:///usr/lib/gcc/x86_64-linux-gnu/4.8/include" />
+          <root url="file:///usr/include" />
+          <root url="file:///usr/local/include" />
+          <root url="file://$MODULE_DIR$/.." />
+        </CLASSES>
+        <SOURCES>
+          <root url="file:///usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed" />
+          <root url="file:///usr/lib/gcc/x86_64-linux-gnu/4.8/include" />
+          <root url="file:///usr/include" />
+          <root url="file:///usr/local/include" />
+          <root url="file://$MODULE_DIR$/.." />
+        </SOURCES>
+        <excluded>
+          <root url="file://$MODULE_DIR$" />
+        </excluded>
+      </library>
+    </orderEntry>
+  </component>
+</module>

@@ -1,0 +1,24 @@
+cmake_minimum_required(VERSION 2.8)
+project(HM)
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/../bin)
+
+INCLUDE_DIRECTORIES(
+        ../
+)
+
+#set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib_cmake)
+
+ADD_SUBDIRECTORY(./Lib/libmd5)
+ADD_SUBDIRECTORY(./Lib/TAppCommon)
+ADD_SUBDIRECTORY(./Lib/TLibCommon)
+ADD_SUBDIRECTORY(./Lib/TLibDecoder)
+ADD_SUBDIRECTORY(./Lib/TLibEncoder)
+ADD_SUBDIRECTORY(./Lib/TLibVideoIO)
+ADD_SUBDIRECTORY(./App/utils)
+ADD_SUBDIRECTORY(./App/utils/BitrateTargeting)
+ADD_SUBDIRECTORY(./App/TAppEncoder)
+ADD_SUBDIRECTORY(./App/TAppDecoder)
+
