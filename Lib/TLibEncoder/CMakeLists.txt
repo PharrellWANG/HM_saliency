@@ -1,16 +1,33 @@
 cmake_minimum_required(VERSION 2.8)
 project(TLibEncoder)
 
+FIND_PACKAGE( OpenCV REQUIRED )
+FIND_PACKAGE( Caffe REQUIRED )
+
+ADD_DEFINITIONS(${Caffe_DEFINITIONS})    # ex. -DCPU_ONLY
+
+
+INCLUDE_DIRECTORIES(                        #包含目录
+        ${Caffe_INCLUDE_DIRS}
+        )
+
+
+
+
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
 INCLUDE_DIRECTORIES(
         ../
 )
 
+
+
 set(SOURCE_FILES
     AnnexBwrite.h
     NALwrite.cpp
     NALwrite.h
+    SaliencyNet.h
+    SaliencyNet.cpp
     SEIEncoder.cpp
     SEIEncoder.h
     SEIwrite.cpp
@@ -52,6 +69,6 @@ set(SOURCE_FILES
     WeightPredAnalysis.h)
 
 ADD_LIBRARY(TLibEncoder STATIC ${SOURCE_FILES})
-target_link_libraries(TLibEncoder TLibCommon)
+target_link_libraries(TLibEncoder TLibCommon ${OpenCV_LIBS} ${Caffe_LIBRARIES})
 
 
