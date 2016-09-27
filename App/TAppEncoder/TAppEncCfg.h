@@ -167,6 +167,8 @@ protected:
   Bool      m_bUseAdaptiveQP;                                 ///< Flag for enabling QP adaptation based on a psycho-visual model
   Int       m_iQPAdaptationRange;                             ///< dQP range by QP adaptation
 
+  Bool      m_bUseSaliencyQP;                                 ///< Flag for enabling QP adaptation based on a saliency model
+
   Int       m_maxTempLayer;                                  ///< Max temporal layer
 
   // coding unit (CU) definition
