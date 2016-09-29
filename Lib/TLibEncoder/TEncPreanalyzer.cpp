@@ -37,8 +37,13 @@
 
 #include <cfloat>
 #include <algorithm>
+#include <opencv2/core.hpp>
+#include <opencv2/highgui.hpp>
+#include <opencv2/imgproc.hpp>
+#include <vector>
 
 #include "TEncPreanalyzer.h"
+#include "SaliencyNet.h"
 
 using namespace std;
 
@@ -49,18 +54,23 @@ using namespace std;
  */
 TEncPreanalyzer::TEncPreanalyzer()
 {
+    cout << "new" << endl;
+    m_psaliecy_net = new SaliencyNet();
 }
 
 /** Destructor
  */
 TEncPreanalyzer::~TEncPreanalyzer()
 {
+    cout << "delete" << endl;
+    delete( m_psaliecy_net );
 }
 
 /** Analyze source picture and compute local image characteristics used for QP adaptation
  * \param pcEPic Picture object to be analyzed
  * \return Void
  */
+
 Void TEncPreanalyzer::xPreanalyze( TEncPic* pcEPic )
 {
   TComPicYuv* pcPicYuv = pcEPic->getPicYuvOrg();
@@ -150,4 +160,82 @@ Void TEncPreanalyzer::xPreanalyze( TEncPic* pcEPic )
   }
 }
 //! \}
+
+void TEncPreanalyzer::xComputeSaliency(TEncPic *pcEPic)
+{
+    TComPicYuv* pcPicYuv = pcEPic->getPicYuvOrg();
+    const Int iWidth = pcPicYuv->getWidth(COMPONENT_Y);
+    const Int iHeight = pcPicYuv->getHeight(COMPONENT_Y);
+    const Int iStride = pcPicYuv->getStride(COMPONENT_Y);
+
+    std::vector<cv::Mat> srcs;
+    srcs.push_back(cv::Mat(iHeight, iWidth, CV_16UC1, pcPicYuv->getAddr(COMPONENT_Y), iStride*2));
+    srcs.push_back(cv::Mat(pcPicYuv->getHeight(COMPONENT_Cr),
+                           pcPicYuv->getWidth(COMPONENT_Cr),
+                           CV_16UC1,
+                           pcPicYuv->getAddr(COMPONENT_Cr),
+                           pcPicYuv->getStride(COMPONENT_Cr) * 2
+    ));
+    srcs.push_back(cv::Mat(pcPicYuv->getHeight(COMPONENT_Cb),
+                           pcPicYuv->getWidth(COMPONENT_Cb),
+                           CV_16UC1,
+                           pcPicYuv->getAddr(COMPONENT_Cb),
+                           pcPicYuv->getStride(COMPONENT_Cb) * 2
+    ));
+    std::for_each(srcs.begin(), srcs.end(), [](cv::Mat& src){ src.convertTo(src, CV_8UC1); } );
+    cv::resize(srcs[1], srcs[1], srcs[0].size());
+    cv::resize(srcs[2], srcs[2], srcs[0].size());
+    cv::Mat pic_orig, saliency_map;
+    cv::merge(srcs, pic_orig);
+    cv::cvtColor(pic_orig, pic_orig, CV_YCrCb2BGR);
+    m_psaliecy_net->get_saliency_map(pic_orig, saliency_map);
+
+    cv::imshow("show", saliency_map);
+    cv::waitKey(1);
+
+    for ( UInt d = 0; d < pcEPic->getMaxAQDepth(); d++ ) {
+        //const Pel *pLineY = pcPicYuv->getAddr(COMPONENT_Y);
+        TEncPicQPAdaptationSaliencyLayer *pcAQSLayer = pcEPic->getAQSLayer(d);
+        const UInt uiAQPartWidth = pcAQSLayer->getAQPartWidth();
+        const UInt uiAQPartHeight = pcAQSLayer->getAQPartHeight();
+        TEncQPAdaptationSaliencyUnit *pcAQU = pcAQSLayer->getQPAdaptationSaliencyUnit();
+
+        Double dSumAct = 0.0;
+        for (UInt y = 0; y < iHeight; y += uiAQPartHeight) {
+
+            const UInt uiCurrAQPartHeight = min(uiAQPartHeight, iHeight - y);
+            for (UInt x = 0; x < iWidth; x += uiAQPartWidth, pcAQU++) {
+                const UInt uiCurrAQPartWidth = min(uiAQPartWidth, iWidth - x);
+                //const Pel *pBlkY = &pLineY[x];
+
+                UInt64 uiSaliencySum = 0;
+                UInt64 uiSum[4] = {0, 0, 0, 0};
+                UInt64 uiSumSq[4] = {0, 0, 0, 0};
+                UInt by = 0;
+
+                for (; by < uiCurrAQPartHeight; by++) {
+                    const char* pLineY = saliency_map.ptr<char>(y + by);
+                    const char *pBlkY = &pLineY[x];
+                    UInt bx = 0;
+                    for (; bx < uiCurrAQPartWidth; bx++) {
+                        uiSaliencySum += pBlkY[bx];
+                    }
+                }
+
+                assert ((uiCurrAQPartWidth & 1) == 0);
+                assert ((uiCurrAQPartHeight & 1) == 0);
+
+                const UInt numPixInAQPart = uiAQPartWidth * uiAQPartHeight;
+
+
+                const Double dActivity = uiSaliencySum / numPixInAQPart;
+                pcAQU->setActivity( dActivity);
+                dSumAct += dActivity;
+            }
+        }
+
+        const Double dAvgAct = dSumAct / (pcAQSLayer->getNumAQPartInWidth() * pcAQSLayer->getNumAQPartInHeight());
+        pcAQSLayer->setAvgActivity(dAvgAct);
+    }
+}
 

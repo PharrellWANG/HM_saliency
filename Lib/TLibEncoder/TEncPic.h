@@ -62,6 +62,20 @@ public:
   Double getActivity()           { return m_dActivity; }
 };
 
+/// Unit block for storing image characteristics
+class TEncQPAdaptationSaliencyUnit
+{
+private:
+    Double m_dActivity;
+
+public:
+    TEncQPAdaptationSaliencyUnit();
+    ~TEncQPAdaptationSaliencyUnit();
+
+    Void   setActivity( Double d ) { m_dActivity = d; }
+    Double getActivity()           { return m_dActivity; }
+};
+
 /// Local image characteristics for CUs on a specific depth
 class TEncPicQPAdaptationLayer
 {
@@ -71,6 +85,7 @@ private:
   UInt                  m_uiNumAQPartInWidth;
   UInt                  m_uiNumAQPartInHeight;
   TEncQPAdaptationUnit* m_acTEncAQU;
+  TEncQPAdaptationSaliencyUnit* m_acTEncAQSU;
   Double                m_dAvgActivity;
 
 public:
@@ -91,21 +106,55 @@ public:
   Void                   setAvgActivity( Double d )  { m_dAvgActivity = d; }
 };
 
+/// Local image characteristics for CUs on a specific depth
+class TEncPicQPAdaptationSaliencyLayer
+{
+private:
+    UInt                  m_uiAQPartWidth;
+    UInt                  m_uiAQPartHeight;
+    UInt                  m_uiNumAQPartInWidth;
+    UInt                  m_uiNumAQPartInHeight;
+    TEncQPAdaptationSaliencyUnit* m_acTEncAQSU;
+    Double                m_dAvgActivity;
+
+public:
+    TEncPicQPAdaptationSaliencyLayer();
+    virtual ~TEncPicQPAdaptationSaliencyLayer();
+
+    Void  create( Int iWidth, Int iHeight, UInt uiAQPartWidth, UInt uiAQPartHeight );
+    Void  destroy();
+
+    UInt                   getAQPartWidth()        { return m_uiAQPartWidth;       }
+    UInt                   getAQPartHeight()       { return m_uiAQPartHeight;      }
+    UInt                   getNumAQPartInWidth()   { return m_uiNumAQPartInWidth;  }
+    UInt                   getNumAQPartInHeight()  { return m_uiNumAQPartInHeight; }
+    UInt                   getAQPartStride()       { return m_uiNumAQPartInWidth;  }
+    TEncQPAdaptationSaliencyUnit*  getQPAdaptationSaliencyUnit()   { return m_acTEncAQSU;           }
+    Double                 getAvgActivity()        { return m_dAvgActivity;        }
+
+    Void                   setAvgActivity( Double d )  { m_dAvgActivity = d; }
+};
+
+
+
+
 /// Picture class including local image characteristics information for QP adaptation
 class TEncPic : public TComPic
 {
 private:
   TEncPicQPAdaptationLayer* m_acAQLayer;
+  TEncPicQPAdaptationSaliencyLayer* m_acAQSLayer;
   UInt                      m_uiMaxAQDepth;
 
 public:
   TEncPic();
   virtual ~TEncPic();
 
-  Void          create( const TComSPS &sps, const TComPPS &pps, UInt uiMaxAdaptiveQPDepth, UInt uiPLTMaxSize, UInt uiPLTMaxPredSize, Bool bIsVirtual /* = false*/ );
+  Void          create( const TComSPS &sps, const TComPPS &pps, UInt uiMaxAdaptiveQPDepth, UInt uiPLTMaxSize, UInt uiPLTMaxPredSize, Bool bIsVirtual /* = false*/, Bool bIsAQ = true, Bool bIsAQS = false );
   virtual Void  destroy();
 
   TEncPicQPAdaptationLayer* getAQLayer( UInt uiDepth )  { return &m_acAQLayer[uiDepth]; }
+  TEncPicQPAdaptationSaliencyLayer* getAQSLayer( UInt uiDepth )  { return &m_acAQSLayer[uiDepth]; }
   UInt                      getMaxAQDepth()             { return m_uiMaxAQDepth;        }
 };
 

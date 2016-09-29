@@ -39,6 +39,9 @@
 #define __TENCPREANALYZER__
 
 #include "TEncPic.h"
+//#include "SaliencyNet.h"
+
+class SaliencyNet;
 
 //! \ingroup TLibEncoder
 //! \{
@@ -55,6 +58,11 @@ public:
   virtual ~TEncPreanalyzer();
 
   Void xPreanalyze( TEncPic* pcPic );
+
+  void xComputeSaliency( TEncPic* pcPic );
+
+private:
+  SaliencyNet* m_psaliecy_net;
 };
 
 //! \}

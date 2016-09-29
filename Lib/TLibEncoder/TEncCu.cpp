@@ -1512,6 +1512,23 @@ Int TEncCu::xComputeQP( TComDataCU* pcCU, UInt uiDepth )
     Double dQpOffset = log(dNormAct) / log(2.0) * 6.0;
     iQpOffset = Int(floor( dQpOffset + 0.49999 ));
   }
+  if ( m_pcEncCfg->getUseSaliencyQP() )
+  {
+    TEncPic* pcEPic = dynamic_cast<TEncPic*>( pcCU->getPic() );
+    UInt uiAQDepth = min( uiDepth, pcEPic->getMaxAQDepth()-1 );
+    TEncPicQPAdaptationSaliencyLayer* pcAQSLayer = pcEPic->getAQSLayer( uiAQDepth );
+    UInt uiAQUPosX = pcCU->getCUPelX() / pcAQSLayer->getAQPartWidth();
+    UInt uiAQUPosY = pcCU->getCUPelY() / pcAQSLayer->getAQPartHeight();
+    UInt uiAQUStride = pcAQSLayer->getAQPartStride();
+    TEncQPAdaptationSaliencyUnit* acAQSU = pcAQSLayer->getQPAdaptationSaliencyUnit();
+
+    Double dMaxQScale = pow(2.0, m_pcEncCfg->getQPAdaptationRange()/6.0);
+    Double dAvgAct = pcAQSLayer->getAvgActivity();
+    Double dCUAct = acAQSU[uiAQUPosY * uiAQUStride + uiAQUPosX].getActivity();
+    Double dNormAct = (dMaxQScale*dCUAct + dAvgAct) / (dCUAct + dMaxQScale*dAvgAct);
+    Double dQpOffset = log(dNormAct) / log(2.0) * 6.0;
+    iQpOffset = Int(floor( dQpOffset + 0.49999 ));
+  }
 
   return Clip3(-pcCU->getSlice()->getSPS()->getQpBDOffset(CHANNEL_TYPE_LUMA), MAX_QP, iBaseQp+iQpOffset );
 }

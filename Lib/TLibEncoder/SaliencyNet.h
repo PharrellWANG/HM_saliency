@@ -34,11 +34,15 @@ public:
     );
     virtual ~SaliencyNet();
 
+    void get_saliency_map(const cv::Mat& src, cv::Mat& saliecy_map);
+    void get_saliency_map(caffe::Blob<float> &input_blob);
+
     void get_saliency_map_to_opencv(const std::string input_filename, cv::Mat & saliency_map);
     void get_saliency_map_to_file(const std::string input_filename, std::string saliency_map_filename);
 
 private:
     void load_to_blob(const std::string input_filename, caffe::Blob<float> &input_blob);
+    void convert_cv_mat_to_blob(const cv::Mat& src, caffe::Blob<float> &input_blob);
     void get_feature_blob_to_opencv(cv::Mat & saliency_map);
 
 private:

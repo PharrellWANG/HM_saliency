@@ -339,6 +339,10 @@ Void TEncTop::encode( Bool flush, TComPicYuv* pcPicYuvOrg, TComPicYuv* pcPicYuvT
     {
       m_cPreanalyzer.xPreanalyze( dynamic_cast<TEncPic*>( pcPicCurr ) );
     }
+    if ( getUseSaliencyQP() )
+    {
+      m_cPreanalyzer.xComputeSaliency( dynamic_cast<TEncPic*>( pcPicCurr ) );
+    }
   }
 
   if ((m_iNumPicRcvd == 0) || (!flush && (m_iPOCLast != 0) && (m_iNumPicRcvd != m_iGOPSize) && (m_iGOPSize != 0)))
@@ -450,6 +454,10 @@ Void TEncTop::encode(Bool flush, TComPicYuv* pcPicYuvOrg, TComPicYuv* pcPicYuvTr
       {
         m_cPreanalyzer.xPreanalyze( dynamic_cast<TEncPic*>( pcField ) );
       }
+      if ( getUseSaliencyQP() )
+      {
+        m_cPreanalyzer.xComputeSaliency( dynamic_cast<TEncPic*>( pcField ) );
+      }
     }
 
     if ( m_iNumPicRcvd && ((flush&&fieldNum==1) || (m_iPOCLast/2)==0 || m_iNumPicRcvd==m_iGOPSize ) )
@@ -497,10 +505,17 @@ Void TEncTop::xGetNewPicBuffer ( TComPic*& rpcPic )
   }
   else
   {
-    if ( getUseAdaptiveQP() )
+    if ( getUseAdaptiveQP() || getUseSaliencyQP())
     {
       TEncPic* pcEPic = new TEncPic;
-      pcEPic->create( m_cSPS, m_cPPS, m_cPPS.getMaxCuDQPDepth()+1, m_cSPS.getSpsScreenExtension().getPLTMaxSize(), m_cSPS.getSpsScreenExtension().getPLTMaxPredSize(), false);
+      pcEPic->create( m_cSPS,
+                      m_cPPS,
+                      m_cPPS.getMaxCuDQPDepth()+1,
+                      m_cSPS.getSpsScreenExtension().getPLTMaxSize(),
+                      m_cSPS.getSpsScreenExtension().getPLTMaxPredSize(),
+                      false,
+                      getUseAdaptiveQP(),
+                      getUseSaliencyQP());
       rpcPic = pcEPic;
     }
     else
@@ -881,7 +896,7 @@ Void TEncTop::xInitPPS()
   m_cPPS.setConstrainedIntraPred( m_bUseConstrainedIntraPred );
   Bool bUseDQP = (getMaxCuDQPDepth() > 0)? true : false;
 
-  if((getMaxDeltaQP() != 0 )|| getUseAdaptiveQP())
+  if((getMaxDeltaQP() != 0 )|| getUseAdaptiveQP() || getUseSaliencyQP())
   {
     bUseDQP = true;
   }

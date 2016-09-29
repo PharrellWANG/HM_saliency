@@ -36,6 +36,15 @@ void SaliencyNet::get_saliency_map_to_opencv(const std::string input_filename, c
     caffe::Blob<float> input_blob;
     LOG(ERROR) << "Load input image file " << input_filename << " to blob";
     load_to_blob(input_filename, input_blob);
+
+    get_saliency_map(input_blob);
+
+    get_feature_blob_to_opencv(saliency_map);
+    LOG(ERROR) << "Successfully extracted the saliency map";
+}
+
+void SaliencyNet::get_saliency_map(caffe::Blob<float> &input_blob)
+{
     std::vector<caffe::Blob<float>* > input_blob_vec;
     input_blob_vec.push_back(&input_blob);
     boost::shared_ptr<caffe::Blob<float> > bottom_blob = m_saliency_net->blob_by_name(m_input_blob_name);
@@ -43,11 +52,7 @@ void SaliencyNet::get_saliency_map_to_opencv(const std::string input_filename, c
 
     LOG(ERROR) << "Start extracting saliency map";
     m_saliency_net->Forward(input_blob_vec);
-
-    get_feature_blob_to_opencv(saliency_map);
-    LOG(ERROR) << "Successfully extracted the saliency map";
 }
-
 
 void SaliencyNet::get_saliency_map_to_file(const std::string input_filename,
                                                   std::string saliency_map_filename)
@@ -63,17 +68,7 @@ void SaliencyNet::load_to_blob(const std::string input_filename, caffe::Blob<flo
 {
     cv::Mat src;
     src = cv::imread(input_filename);
-    float scale = (float) std::min(320.0 / src.cols, 320.0 / src.rows);
-    cv::resize(src, src, cv::Size(), scale, scale);
-    src = src - cv::Scalar(100, 110, 118);
-    src.convertTo(src, CV_32FC3, 1.0/128);
-    std::vector<cv::Mat> channels;
-    cv::split(src, channels);
-    input_blob.Reshape(1, 3, src.rows, src.cols);
-    float* data_ptr = input_blob.mutable_cpu_data();
-    for (int i=0; i<3; i++) {
-        memcpy(data_ptr + i*src.cols*src.rows, channels[i].data, src.cols*src.rows*sizeof(float));
-    }
+    convert_cv_mat_to_blob(src, input_blob);
 }
 
 
@@ -93,4 +88,28 @@ void SaliencyNet::get_feature_blob_to_opencv(cv::Mat &saliency_map)
     saliency_map = img + cv::Scalar((float)1.0);
     saliency_map.convertTo(saliency_map, CV_8UC1, 128);
     delete[] ptr_cv_mat;
+}
+
+void SaliencyNet::convert_cv_mat_to_blob(const cv::Mat &src, caffe::Blob<float> &input_blob)
+{
+    cv::Mat temp_mat;
+    float scale = (float) std::min(320.0 / src.cols, 320.0 / src.rows);
+    cv::resize(src, temp_mat, cv::Size(), scale, scale);
+    temp_mat = temp_mat - cv::Scalar(100, 110, 118);
+    temp_mat.convertTo(temp_mat, CV_32FC3, 1.0/128);
+    std::vector<cv::Mat> channels;
+    cv::split(temp_mat, channels);
+    input_blob.Reshape(1, 3, temp_mat.rows, temp_mat.cols);
+    float* data_ptr = input_blob.mutable_cpu_data();
+    for (int i=0; i<3; i++) {
+        memcpy(data_ptr + i*temp_mat.cols*temp_mat.rows, channels[i].data, temp_mat.cols*temp_mat.rows*sizeof(float));
+    }
+}
+
+void SaliencyNet::get_saliency_map(const cv::Mat &src, cv::Mat &saliecy_map)
+{
+    caffe::Blob<float> input_blob;
+    convert_cv_mat_to_blob(src, input_blob);
+    get_saliency_map(input_blob);
+    get_feature_blob_to_opencv(saliecy_map);
 }

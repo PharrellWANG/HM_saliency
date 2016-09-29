@@ -55,6 +55,19 @@ TEncQPAdaptationUnit::~TEncQPAdaptationUnit()
 
 /** Constructor
  */
+TEncQPAdaptationSaliencyUnit::TEncQPAdaptationSaliencyUnit()
+        : m_dActivity(0.0)
+{
+}
+
+/** Destructor
+ */
+TEncQPAdaptationSaliencyUnit::~TEncQPAdaptationSaliencyUnit()
+{
+}
+
+/** Constructor
+ */
 TEncPicQPAdaptationLayer::TEncPicQPAdaptationLayer()
 : m_uiAQPartWidth(0)
 , m_uiAQPartHeight(0)
@@ -102,6 +115,53 @@ Void TEncPicQPAdaptationLayer::destroy()
 
 /** Constructor
  */
+TEncPicQPAdaptationSaliencyLayer::TEncPicQPAdaptationSaliencyLayer()
+        : m_uiAQPartWidth(0)
+        , m_uiAQPartHeight(0)
+        , m_uiNumAQPartInWidth(0)
+        , m_uiNumAQPartInHeight(0)
+        , m_acTEncAQSU(NULL)
+        , m_dAvgActivity(0.0)
+{
+}
+
+/** Destructor
+ */
+TEncPicQPAdaptationSaliencyLayer::~TEncPicQPAdaptationSaliencyLayer()
+{
+  destroy();
+}
+
+/** Initialize member variables
+ * \param iWidth Picture width
+ * \param iHeight Picture height
+ * \param uiAQPartWidth Width of unit block for analyzing local image characteristics
+ * \param uiAQPartHeight Height of unit block for analyzing local image characteristics
+ * \return Void
+ */
+Void TEncPicQPAdaptationSaliencyLayer::create( Int iWidth, Int iHeight, UInt uiAQPartWidth, UInt uiAQPartHeight )
+{
+  m_uiAQPartWidth = uiAQPartWidth;
+  m_uiAQPartHeight = uiAQPartHeight;
+  m_uiNumAQPartInWidth = (iWidth + m_uiAQPartWidth-1) / m_uiAQPartWidth;
+  m_uiNumAQPartInHeight = (iHeight + m_uiAQPartHeight-1) / m_uiAQPartHeight;
+  m_acTEncAQSU = new TEncQPAdaptationSaliencyUnit[ m_uiNumAQPartInWidth * m_uiNumAQPartInHeight ];
+}
+
+/** Clean up
+ * \return Void
+ */
+Void TEncPicQPAdaptationSaliencyLayer::destroy()
+{
+  if (m_acTEncAQSU)
+  {
+    delete[] m_acTEncAQSU;
+    m_acTEncAQSU = NULL;
+  }
+}
+
+/** Constructor
+ */
 TEncPic::TEncPic()
 : m_acAQLayer(NULL)
 , m_uiMaxAQDepth(0)
@@ -123,7 +183,7 @@ TEncPic::~TEncPic()
  */
 Void TEncPic::create( const TComSPS &sps, const TComPPS &pps, UInt uiMaxAdaptiveQPDepth,
                       UInt uiPLTMaxSize, UInt uiPLTMaxPredSize,
-                      Bool bIsVirtual )
+                      Bool bIsVirtual, Bool bIsAQ, Bool bIsAQS )
 {
   TComPic::create( sps, pps, uiPLTMaxSize, uiPLTMaxPredSize, bIsVirtual );
   const Int  iWidth      = sps.getPicWidthInLumaSamples();
@@ -133,11 +193,21 @@ Void TEncPic::create( const TComSPS &sps, const TComPPS &pps, UInt uiMaxAdaptive
   m_uiMaxAQDepth = uiMaxAdaptiveQPDepth;
   if ( uiMaxAdaptiveQPDepth > 0 )
   {
-    m_acAQLayer = new TEncPicQPAdaptationLayer[ m_uiMaxAQDepth ];
-    for (UInt d = 0; d < m_uiMaxAQDepth; d++)
-    {
-      m_acAQLayer[d].create( iWidth, iHeight, uiMaxWidth>>d, uiMaxHeight>>d );
+    if (bIsAQ) {
+      m_acAQLayer = new TEncPicQPAdaptationLayer[ m_uiMaxAQDepth ];
+      for (UInt d = 0; d < m_uiMaxAQDepth; d++)
+      {
+        m_acAQLayer[d].create( iWidth, iHeight, uiMaxWidth>>d, uiMaxHeight>>d );
+      }
     }
+    if (bIsAQS) {
+      m_acAQSLayer = new TEncPicQPAdaptationSaliencyLayer[ m_uiMaxAQDepth ];
+      for (UInt d = 0; d < m_uiMaxAQDepth; d++)
+      {
+        m_acAQSLayer[d].create( iWidth, iHeight, uiMaxWidth>>d, uiMaxHeight>>d );
+      }
+    }
+
   }
 }
 
