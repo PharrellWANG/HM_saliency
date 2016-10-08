@@ -54,7 +54,6 @@ using namespace std;
  */
 TEncPreanalyzer::TEncPreanalyzer()
 {
-    cout << "new" << endl;
     m_psaliecy_net = new SaliencyNet();
 }
 
@@ -62,7 +61,6 @@ TEncPreanalyzer::TEncPreanalyzer()
  */
 TEncPreanalyzer::~TEncPreanalyzer()
 {
-    cout << "delete" << endl;
     delete( m_psaliecy_net );
 }
 
@@ -189,9 +187,8 @@ void TEncPreanalyzer::xComputeSaliency(TEncPic *pcEPic)
     cv::merge(srcs, pic_orig);
     cv::cvtColor(pic_orig, pic_orig, CV_YCrCb2BGR);
     m_psaliecy_net->get_saliency_map(pic_orig, saliency_map);
+    cv::resize(saliency_map, saliency_map, cv::Size(iWidth, iHeight));
 
-    cv::imshow("show", saliency_map);
-    cv::waitKey(1);
 
     for ( UInt d = 0; d < pcEPic->getMaxAQDepth(); d++ ) {
         //const Pel *pLineY = pcPicYuv->getAddr(COMPONENT_Y);

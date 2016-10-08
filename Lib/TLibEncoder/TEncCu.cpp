@@ -1525,7 +1525,7 @@ Int TEncCu::xComputeQP( TComDataCU* pcCU, UInt uiDepth )
     Double dMaxQScale = pow(2.0, m_pcEncCfg->getQPAdaptationRange()/6.0);
     Double dAvgAct = pcAQSLayer->getAvgActivity();
     Double dCUAct = acAQSU[uiAQUPosY * uiAQUStride + uiAQUPosX].getActivity();
-    Double dNormAct = (dMaxQScale*dCUAct + dAvgAct) / (dCUAct + dMaxQScale*dAvgAct);
+    Double dNormAct = (dMaxQScale*dAvgAct + dCUAct) / (dAvgAct + dMaxQScale*dCUAct);
     Double dQpOffset = log(dNormAct) / log(2.0) * 6.0;
     iQpOffset = Int(floor( dQpOffset + 0.49999 ));
   }
