@@ -39,6 +39,8 @@
 #include "TLibCommon/TComTU.h"
 #include "TLibCommon/TComPrediction.h"
 
+#include <fstream>
+
 //! \ingroup TLibDecoder
 //! \{
 
@@ -300,6 +302,32 @@ Void TDecCu::xDecodeCU( TComDataCU*const pcCU, const UInt uiAbsPartIdx, const UI
         pcCU->getCUMvField( RefPicList( uiRefListIdx ) )->setAllMvField( cMvFieldNeighbours[ 2*uiMergeIndex + uiRefListIdx ], SIZE_2Nx2N, uiAbsPartIdx, uiDepth );
       }
     }
+
+    ofstream out;
+    out.open("./mv_result.txt", ios::out|ios::app);
+    Int numParts = m_ppcCU[uiDepth]->getNumPartitions();
+    for (Int iPartIdx = 0; iPartIdx < numParts; iPartIdx++) {
+      UInt uiPartAddr;
+      Int iWidth, iHeight;
+      m_ppcCU[uiDepth]->getPartIndexAndSize(iPartIdx, uiPartAddr, iWidth, iHeight);
+      out << "POC: " << m_ppcCU[uiDepth]->getSlice()->getPOC();
+      out << " X:" << m_ppcCU[uiDepth]->getCUPelX() << " Y:" << m_ppcCU[uiDepth]->getCUPelY();
+      out << " partIdx:" << iPartIdx << " width:" << iWidth << " height:" << iHeight;
+      for (Int refList = 0; refList < 2; refList++) {
+        RefPicList eRefPicList = RefPicList(refList);
+        Int iRefIdx = m_ppcCU[uiDepth]->getCUMvField(eRefPicList)->getRefIdx(uiPartAddr);
+        if (iRefIdx != -1) {
+          out << " ref:" << iRefIdx << " refPOC:" << m_ppcCU[uiDepth]->getSlice()->getRefPic(eRefPicList, iRefIdx)->getPOC();
+          out << " mvx:" << m_ppcCU[uiDepth]->getCUMvField(eRefPicList)->getMv(uiPartAddr).getHor();
+          out << " mvy:" << m_ppcCU[uiDepth]->getCUMvField(eRefPicList)->getMv(uiPartAddr).getVer();
+          out << " mode:skip";
+        }
+      }
+      out << endl;
+    }
+    out.close();
+
+
     xFinishDecodeCU( pcCU, uiAbsPartIdx, uiDepth, isLastCtuOfSliceSegment );
     return;
   }
@@ -357,8 +385,12 @@ Void TDecCu::xFinishDecodeCU( TComDataCU* pcCU, UInt uiAbsPartIdx, UInt uiDepth,
   isLastCtuOfSliceSegment = xDecodeSliceEnd( pcCU, uiAbsPartIdx );
 }
 
+
 Void TDecCu::xDecompressCU( TComDataCU* pCtu, UInt uiAbsPartIdx,  UInt uiDepth )
 {
+
+
+
   TComPic* pcPic = pCtu->getPic();
   TComSlice * pcSlice = pCtu->getSlice();
   const TComSPS &sps=*(pcSlice->getSPS());
@@ -399,6 +431,34 @@ Void TDecCu::xDecompressCU( TComDataCU* pCtu, UInt uiAbsPartIdx,  UInt uiDepth )
 
   m_ppcCU[uiDepth]->copySubCU( pCtu, uiAbsPartIdx );
 
+  ofstream out;
+  out.open("./mv_result.txt", ios::out|ios::app);
+  Int numParts = m_ppcCU[uiDepth]->getNumPartitions();
+  for (Int iPartIdx = 0; iPartIdx < numParts; iPartIdx++) {
+    UInt uiPartAddr;
+    Int iWidth, iHeight;
+    Int px, py, pw, ph;
+    m_ppcCU[uiDepth]->getPartIndexAndSize(iPartIdx, uiPartAddr, iWidth, iHeight);
+    m_ppcCU[uiDepth]->getPartPosition(iPartIdx, px, py, pw, ph );
+    out << "POC: " << m_ppcCU[uiDepth]->getSlice()->getPOC();
+    out << " X:" << px << " Y:" << py;
+    out << " partIdx:" << iPartIdx ;
+    out << " width:" << pw << " height:" << ph;
+    for (Int refList = 0; refList < 2; refList++) {
+      RefPicList eRefPicList = RefPicList(refList);
+      Int iRefIdx = m_ppcCU[uiDepth]->getCUMvField(eRefPicList)->getRefIdx(uiPartAddr);
+      if (iRefIdx != -1) {
+        out << " ref:" << iRefIdx << " refPOC:" << m_ppcCU[uiDepth]->getSlice()->getRefPic(eRefPicList, iRefIdx)->getPOC();
+        out << " mvx:" << m_ppcCU[uiDepth]->getCUMvField(eRefPicList)->getMv(uiPartAddr).getHor();
+        out << " mvy:" << m_ppcCU[uiDepth]->getCUMvField(eRefPicList)->getMv(uiPartAddr).getVer();
+      }
+    }
+    out << endl;
+  }
+  out.close();
+
+
+
   switch( m_ppcCU[uiDepth]->getPredictionMode(0) )
   {
     case MODE_INTER:
@@ -434,6 +494,7 @@ Void TDecCu::xDecompressCU( TComDataCU* pCtu, UInt uiAbsPartIdx,  UInt uiDepth )
   xCopyToPic( m_ppcCU[uiDepth], pcPic, uiAbsPartIdx, uiDepth );
 }
 
+
 Void TDecCu::xReconInter( TComDataCU* pcCU, UInt uiDepth )
 {
   Int numParts = pcCU->getNumPartitions();
@@ -446,6 +507,7 @@ Void TDecCu::xReconInter( TComDataCU* pcCU, UInt uiDepth )
     {
       RefPicList eRefPicList = RefPicList(refList);
       Int        iRefIdx     = pcCU->getCUMvField( eRefPicList )->getRefIdx( uiPartAddr );
+
       if (iRefIdx != -1 && pcCU->getSlice()->getRefPic( eRefPicList, iRefIdx )->getPOC() == pcCU->getSlice()->getPOC() )
       {
         TComMv cMv    = pcCU->getCUMvField( eRefPicList )->getMv( uiPartAddr );
@@ -463,6 +525,7 @@ Void TDecCu::xReconInter( TComDataCU* pcCU, UInt uiDepth )
         }
       }
     }
+
   }
 
   // inter prediction

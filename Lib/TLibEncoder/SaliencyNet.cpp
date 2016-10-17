@@ -15,7 +15,7 @@ m_input_blob_name(input_blob_name),
 m_output_blob_name(output_blob_name)
 {
 
-    caffe::Caffe::set_mode(caffe::Caffe::CPU);
+    caffe::Caffe::set_mode(caffe::Caffe::GPU);
     LOG(ERROR)<<"Net proto: " << m_feature_extraction_proto;
     m_saliency_net = boost::shared_ptr<caffe::Net<float>>(new caffe::Net<float>(m_feature_extraction_proto, caffe::TEST));
     LOG(ERROR)<<"Load pretrained caffe model: " << m_caffe_model;
