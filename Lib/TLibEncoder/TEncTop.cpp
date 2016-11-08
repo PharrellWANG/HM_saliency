@@ -341,7 +341,7 @@ Void TEncTop::encode( Bool flush, TComPicYuv* pcPicYuvOrg, TComPicYuv* pcPicYuvT
     }
     if ( getUseSaliencyQP() )
     {
-      m_cPreanalyzer.xComputeSaliency( dynamic_cast<TEncPic*>( pcPicCurr ) );
+      m_cPreanalyzer.xComputeSaliency( dynamic_cast<TEncPic*>( pcPicCurr ), m_inputFileName );
     }
   }
 
@@ -456,7 +456,7 @@ Void TEncTop::encode(Bool flush, TComPicYuv* pcPicYuvOrg, TComPicYuv* pcPicYuvTr
       }
       if ( getUseSaliencyQP() )
       {
-        m_cPreanalyzer.xComputeSaliency( dynamic_cast<TEncPic*>( pcField ) );
+        m_cPreanalyzer.xComputeSaliency( dynamic_cast<TEncPic*>( pcField ), m_inputFileName);
       }
     }
 
@@ -1326,3 +1326,23 @@ Void  TEncCfg::xCheckGSParameters()
   }
 }
 //! \}
+
+
+void TEncTop::set_filename(const std::string &str) {
+  static const std::vector<std::string> video_set = {"bus", "city", "crew", "flower", "foreman", "hall", "harbour", "mobile", "mother",
+            "soccer", "stefan", "tempete"};
+  std::string filename;
+  filename.resize(str.size());
+  std::transform(str.begin(), str.end(), filename.begin(), [](char c) {
+      return std::tolower(c);
+  });
+  for ( auto &a_name : video_set ) {
+    if(filename.find( a_name) != std::string::npos) {
+      m_inputFileName = a_name;
+      std::cout << "Data matched: " << a_name << endl;
+      return;
+    }
+  }
+  std::cerr << "Cannot match the video!" << endl;
+}
+

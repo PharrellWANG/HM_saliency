@@ -54,7 +54,7 @@ using namespace std;
  */
 TEncPreanalyzer::TEncPreanalyzer()
 {
-    m_psaliecy_net = new SaliencyNet();
+    //m_psaliecy_net = new SaliencyNet();
 }
 
 /** Destructor
@@ -162,6 +162,7 @@ Void TEncPreanalyzer::xPreanalyze( TEncPic* pcEPic )
 void TEncPreanalyzer::xComputeSaliency(TEncPic *pcEPic)
 {
     TComPicYuv* pcPicYuv = pcEPic->getPicYuvOrg();
+    //pcEPic.get
     const Int iWidth = pcPicYuv->getWidth(COMPONENT_Y);
     const Int iHeight = pcPicYuv->getHeight(COMPONENT_Y);
     const Int iStride = pcPicYuv->getStride(COMPONENT_Y);
@@ -234,5 +235,67 @@ void TEncPreanalyzer::xComputeSaliency(TEncPic *pcEPic)
         const Double dAvgAct = dSumAct / (pcAQSLayer->getNumAQPartInWidth() * pcAQSLayer->getNumAQPartInHeight());
         pcAQSLayer->setAvgActivity(dAvgAct);
     }
+}
+
+
+void TEncPreanalyzer::xComputeSaliency(TEncPic *pcEPic, const std::string video_filename) {
+    static const std::string sal_map_path = "/data/saliency_maps/";
+    std::string sal_map_filename = sal_map_path + video_filename + "/" + std::to_string(pcEPic->getPOC()+1) + ".png";
+    cv::Mat sal_map;
+    sal_map = cv::imread(sal_map_filename, cv::IMREAD_GRAYSCALE);
+    if (!sal_map.data) {
+        std::cerr << "Cannot load saliency data!" << std::endl;
+        assert(0);
+        return;
+    }
+    TComPicYuv* pcPicYuv = pcEPic->getPicYuvOrg();
+    const Int iWidth = pcPicYuv->getWidth(COMPONENT_Y);
+    const Int iHeight = pcPicYuv->getHeight(COMPONENT_Y);
+    cv::resize(sal_map, sal_map, cv::Size(iWidth, iHeight));
+    for ( UInt d = 0; d < pcEPic->getMaxAQDepth(); d++ ) {
+        TEncPicQPAdaptationSaliencyLayer *pcAQSLayer = pcEPic->getAQSLayer(d);
+        const UInt uiAQPartWidth = pcAQSLayer->getAQPartWidth();
+        const UInt uiAQPartHeight = pcAQSLayer->getAQPartHeight();
+        TEncQPAdaptationSaliencyUnit *pcAQU = pcAQSLayer->getQPAdaptationSaliencyUnit();
+
+        Double dSumAct = 0.0;
+        for (UInt y = 0; y < iHeight; y += uiAQPartHeight) {
+
+            const UInt uiCurrAQPartHeight = min(uiAQPartHeight, iHeight - y);
+            for (UInt x = 0; x < iWidth; x += uiAQPartWidth, pcAQU++) {
+                const UInt uiCurrAQPartWidth = min(uiAQPartWidth, iWidth - x);
+                //const Pel *pBlkY = &pLineY[x];
+
+                UInt64 uiSaliencySum = 0;
+                UInt64 uiSum[4] = {0, 0, 0, 0};
+                UInt64 uiSumSq[4] = {0, 0, 0, 0};
+                UInt by = 0;
+
+                for (; by < uiCurrAQPartHeight; by++) {
+                    const char* pLineY = sal_map.ptr<char>(y + by);
+                    const char *pBlkY = &pLineY[x];
+                    UInt bx = 0;
+                    for (; bx < uiCurrAQPartWidth; bx++) {
+                        uiSaliencySum += pBlkY[bx];
+                    }
+                }
+
+                assert ((uiCurrAQPartWidth & 1) == 0);
+                assert ((uiCurrAQPartHeight & 1) == 0);
+
+                const UInt numPixInAQPart = uiAQPartWidth * uiAQPartHeight;
+
+
+                const Double dActivity = uiSaliencySum / numPixInAQPart;
+                pcAQU->setActivity( dActivity);
+                dSumAct += dActivity;
+            }
+        }
+
+        const Double dAvgAct = dSumAct / (pcAQSLayer->getNumAQPartInWidth() * pcAQSLayer->getNumAQPartInHeight());
+        pcAQSLayer->setAvgActivity(dAvgAct);
+    }
+
+
 }
 

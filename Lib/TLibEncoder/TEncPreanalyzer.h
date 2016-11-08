@@ -60,6 +60,7 @@ public:
   Void xPreanalyze( TEncPic* pcPic );
 
   void xComputeSaliency( TEncPic* pcPic );
+  void xComputeSaliency( TEncPic* pcPic, const std::string video_filename );
 
 private:
   SaliencyNet* m_psaliecy_net;

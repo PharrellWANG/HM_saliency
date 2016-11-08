@@ -447,6 +447,7 @@ Void TAppEncTop::xCreateLib()
 
   // Neo Decoder
   m_cTEncTop.create();
+  m_cTEncTop.set_filename(m_inputFileName);
 }
 
 Void TAppEncTop::xDestroyLib()

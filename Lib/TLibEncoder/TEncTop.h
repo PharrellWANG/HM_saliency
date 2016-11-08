@@ -68,6 +68,7 @@
 class TEncTop : public TEncCfg
 {
 private:
+  std::string             m_inputFileName;
   // picture
   Int                     m_iPOCLast;                     ///< time index (POC)
   Int                     m_iNumPicRcvd;                  ///< number of received pictures
@@ -134,6 +135,9 @@ public:
   // -------------------------------------------------------------------------------------------------------------------
   // member access functions
   // -------------------------------------------------------------------------------------------------------------------
+
+  std::string             get_filename          () { return m_inputFileName;          }
+  void                    set_filename          (const std::string& str);
 
   TComList<TComPic*>*     getListPic            () { return  &m_cListPic;             }
   TEncSearch*             getPredSearch         () { return  &m_cSearch;              }
