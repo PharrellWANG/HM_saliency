@@ -1290,6 +1290,9 @@ Void TEncSearch::xIntraCodingTUBlock(       TComYuv*    pcOrgYuv,
   const Bool           bIsLuma          = isLuma(compID);
   const TComRectangle &rect             = rTu.getRect(compID);
         TComDataCU    *pcCU             = rTu.getCU();
+  //std::cout << "x0: " << rect.x0 << "  y0: " << rect.y0 << "  width: " << rect.width << "  height: " << rect.height << std::endl;
+  //std::cout << "w:" << pcOrgYuv->getWidth(COMPONENT_Y) << " h:" << pcOrgYuv->getHeight(COMPONENT_Y) << std::endl;
+  //std::cout << "x:" << pcCU->getCUPelX() << "  y:" << pcCU->getCUPelY() << std::endl;
   const UInt           uiAbsPartIdx     = rTu.GetAbsPartIdxTU();
   const TComSPS       &sps              = *(pcCU->getSlice()->getSPS());
 
@@ -1565,7 +1568,18 @@ Void TEncSearch::xIntraCodingTUBlock(       TComYuv*    pcOrgYuv,
   }
 
   //===== update distortion =====
-  ruiDist += m_pcRdCost->getDistPart( bitDepth, piReco, uiStride, piOrg, uiStride, uiWidth, uiHeight, compID );
+  //ruiDist += m_pcRdCost->getDistPart( bitDepth, piReco, uiStride, piOrg, uiStride, uiWidth, uiHeight, compID ); //TODO:Anserw
+
+  //TODO: 为了省点事情，这里默认是YUV420了
+  Int x = pcCU->getCUPelX();
+  Int y = pcCU->getCUPelY();
+  if ( compID != COMPONENT_Y) {
+    x /= 2;
+    y /= 2;
+  }
+  x += rect.x0;
+  y += rect.y0;
+  ruiDist += m_pcRdCost->getDistPart(pcCU, x, y, bitDepth, piReco, uiStride, piOrg, uiStride, uiWidth, uiHeight, compID ); //SALOK
 }
 
 Void
@@ -9331,7 +9345,7 @@ Void TEncSearch::xEstimateMvPredAMVP( TComDataCU* pcCU, TComYuv* pcOrgYuv, UInt 
 
     if(pcCU->getSlice()->getMvdL1ZeroFlag() && eRefPicList==REF_PIC_LIST_1)
     {
-      (*puiDistBiP) = xGetTemplateCost( pcCU, uiPartAddr, pcOrgYuv, &m_cYuvPredTemp, rcMvPred, 0, AMVP_MAX_NUM_CANDS, eRefPicList, iRefIdx, iRoiWidth, iRoiHeight);
+      (*puiDistBiP) = xGetTemplateCost( pcCU, uiPartIdx ,uiPartAddr, pcOrgYuv, &m_cYuvPredTemp, rcMvPred, 0, AMVP_MAX_NUM_CANDS, eRefPicList, iRefIdx, iRoiWidth, iRoiHeight);
     }
     return;
   }
@@ -9348,7 +9362,7 @@ Void TEncSearch::xEstimateMvPredAMVP( TComDataCU* pcCU, TComYuv* pcOrgYuv, UInt 
   for ( i = 0 ; i < pcAMVPInfo->iN; i++)
   {
     Distortion uiTmpCost;
-    uiTmpCost = xGetTemplateCost( pcCU, uiPartAddr, pcOrgYuv, &m_cYuvPredTemp, pcAMVPInfo->m_acMvCand[i], i, AMVP_MAX_NUM_CANDS, eRefPicList, iRefIdx, iRoiWidth, iRoiHeight);
+    uiTmpCost = xGetTemplateCost( pcCU, uiPartIdx, uiPartAddr, pcOrgYuv, &m_cYuvPredTemp, pcAMVPInfo->m_acMvCand[i], i, AMVP_MAX_NUM_CANDS, eRefPicList, iRefIdx, iRoiWidth, iRoiHeight);
     if ( uiBestCost > uiTmpCost )
     {
       uiBestCost = uiTmpCost;
@@ -9508,6 +9522,7 @@ Void TEncSearch::xCheckBestMVP ( TComDataCU* pcCU, RefPicList eRefPicList, TComM
 
 
 Distortion TEncSearch::xGetTemplateCost( TComDataCU* pcCU,
+                                         UInt        uiPartIdx,
                                          UInt        uiPartAddr,
                                          TComYuv*    pcOrgYuv,
                                          TComYuv*    pcTemplateCand,
@@ -9541,8 +9556,12 @@ Distortion TEncSearch::xGetTemplateCost( TComDataCU* pcCU,
   }
 
   // calc distortion
-
-  uiCost = m_pcRdCost->getDistPart( pcCU->getSlice()->getSPS()->getBitDepth(CHANNEL_TYPE_LUMA), pcTemplateCand->getAddr(COMPONENT_Y, uiPartAddr), pcTemplateCand->getStride(COMPONENT_Y), pcOrgYuv->getAddr(COMPONENT_Y, uiPartAddr), pcOrgYuv->getStride(COMPONENT_Y), iSizeX, iSizeY, COMPONENT_Y, DF_SAD );
+//TODO:Anserw
+  //SALOK
+  Int x, y, w, h;
+  pcCU->getPartPosition(uiPartIdx, x, y, w, h);
+  //uiCost = m_pcRdCost->getDistPart( pcCU->getSlice()->getSPS()->getBitDepth(CHANNEL_TYPE_LUMA), pcTemplateCand->getAddr(COMPONENT_Y, uiPartAddr), pcTemplateCand->getStride(COMPONENT_Y), pcOrgYuv->getAddr(COMPONENT_Y, uiPartAddr), pcOrgYuv->getStride(COMPONENT_Y), iSizeX, iSizeY, COMPONENT_Y, DF_SAD );
+  uiCost = m_pcRdCost->getDistPart( pcCU, x, y, pcCU->getSlice()->getSPS()->getBitDepth(CHANNEL_TYPE_LUMA), pcTemplateCand->getAddr(COMPONENT_Y, uiPartAddr), pcTemplateCand->getStride(COMPONENT_Y), pcOrgYuv->getAddr(COMPONENT_Y, uiPartAddr), pcOrgYuv->getStride(COMPONENT_Y), iSizeX, iSizeY, COMPONENT_Y, DF_SAD );
   uiCost = (UInt) m_pcRdCost->calcRdCost( m_auiMVPIdxCost[iMVPIdx][iMVPNum], uiCost, DF_SAD );
   return uiCost;
 }
@@ -10403,7 +10422,10 @@ Void TEncSearch::encodeResAndCalcRdInterCU( TComDataCU* pcCU, TComYuv* pcYuvOrg,
       const ComponentID compID=ComponentID(comp);
       const UInt csx=pcYuvOrg->getComponentScaleX(compID);
       const UInt csy=pcYuvOrg->getComponentScaleY(compID);
-      distortion += m_pcRdCost->getDistPart( sps.getBitDepth(toChannelType(compID)), pcYuvRec->getAddr(compID), pcYuvRec->getStride(compID), pcYuvOrg->getAddr(compID),
+      //TODO:Anserw
+      //SALOK
+      distortion += m_pcRdCost->getDistPart( pcCU, pcCU->getCUPelX() >> csx, pcCU->getCUPelY() >> csy,
+                                               sps.getBitDepth(toChannelType(compID)), pcYuvRec->getAddr(compID), pcYuvRec->getStride(compID), pcYuvOrg->getAddr(compID),
                                                pcYuvOrg->getStride(compID), cuWidthPixels >> csx, cuHeightPixels >> csy, compID);
     }
 
@@ -10560,7 +10582,11 @@ Void TEncSearch::encodeResAndCalcRdInterCU( TComDataCU* pcCU, TComYuv* pcYuvOrg,
   for(Int comp=0; comp<numValidComponents; comp++)
   {
     const ComponentID compID=ComponentID(comp);
-    finalDistortion += m_pcRdCost->getDistPart( sps.getBitDepth(toChannelType(compID)), pcYuvRec->getAddr(compID ), pcYuvRec->getStride(compID ), pcYuvOrg->getAddr(compID ), pcYuvOrg->getStride(compID), cuWidthPixels >> pcYuvOrg->getComponentScaleX(compID), cuHeightPixels >> pcYuvOrg->getComponentScaleY(compID), compID);
+    //TODO:Anserw
+    //SALOK
+    Int x = pcCU->getCUPelX() >> pcYuvOrg->getComponentScaleX(compID);
+    Int y = pcCU->getCUPelY()  >> pcYuvOrg->getComponentScaleY(compID);
+    finalDistortion += m_pcRdCost->getDistPart( pcCU, x, y, sps.getBitDepth(toChannelType(compID)), pcYuvRec->getAddr(compID ), pcYuvRec->getStride(compID ), pcYuvOrg->getAddr(compID ), pcYuvOrg->getStride(compID), cuWidthPixels >> pcYuvOrg->getComponentScaleX(compID), cuHeightPixels >> pcYuvOrg->getComponentScaleY(compID), compID);
   }
 
   pcCU->getTotalBits()       = finalBits;
@@ -11478,6 +11504,16 @@ Void TEncSearch::xEstimateInterResidualQT( TComYuv    *pcResi,
                                           currAbsSum, cQP);
               }
 
+              TComDataCU* tempcu = TUIterator.getCU();
+              Int x = tempcu->getCUPelX();
+              Int y = tempcu->getCUPelY();
+              if (compID != COMPONENT_Y) {
+                x /= 2;
+                y /= 2;
+              }
+              x += tuCompRect.x0;
+              y += tuCompRect.y0;
+
               if(isFirstMode || (currAbsSum == 0))
               {
                 if (bUseCrossCPrediction)
@@ -11493,14 +11529,15 @@ Void TEncSearch::xEstimateInterResidualQT( TComYuv    *pcResi,
                                                         tuCompRect.width,
                                                         m_pcQTTempTComYuv[uiQTTempAccessLayer].getStride(compID),
                                                         true);
-
-                  nonCoeffDist = m_pcRdCost->getDistPart( channelBitDepth, m_pcQTTempTComYuv[uiQTTempAccessLayer].getAddrPix( compID, tuCompRect.x0, tuCompRect.y0 ),
+                  //SALOK
+                  nonCoeffDist = m_pcRdCost->getDistPart( pcCU, x, y, channelBitDepth, m_pcQTTempTComYuv[uiQTTempAccessLayer].getAddrPix( compID, tuCompRect.x0, tuCompRect.y0 ),
                                                           m_pcQTTempTComYuv[uiQTTempAccessLayer].getStride( compID ), pcResi->getAddrPix( compID, tuCompRect.x0, tuCompRect.y0 ),
                                                           pcResi->getStride(compID), tuCompRect.width, tuCompRect.height, compID); // initialized with zero residual distortion
                 }
                 else
-                {
-                  nonCoeffDist = m_pcRdCost->getDistPart( channelBitDepth, m_pTempPel, tuCompRect.width, pcResi->getAddrPix( compID, tuCompRect.x0, tuCompRect.y0 ),
+                { //TODO:Anserw
+                  //SALOK
+                  nonCoeffDist = m_pcRdCost->getDistPart( pcCU, x, y, channelBitDepth, m_pTempPel, tuCompRect.width, pcResi->getAddrPix( compID, tuCompRect.x0, tuCompRect.y0 ),
                                                           pcResi->getStride(compID), tuCompRect.width, tuCompRect.height, compID); // initialized with zero residual distortion
                 }
 
@@ -11558,8 +11595,9 @@ Void TEncSearch::xEstimateInterResidualQT( TComYuv    *pcResi,
                                                         m_pcQTTempTComYuv[uiQTTempAccessLayer].getStride(compID     ),
                                                         true);
                 }
-
-                currCompDist = m_pcRdCost->getDistPart( channelBitDepth, m_pcQTTempTComYuv[uiQTTempAccessLayer].getAddrPix( compID, tuCompRect.x0, tuCompRect.y0 ),
+                //TODO:Anserw
+                //SALOK
+                currCompDist = m_pcRdCost->getDistPart( pcCU, x, y, channelBitDepth, m_pcQTTempTComYuv[uiQTTempAccessLayer].getAddrPix( compID, tuCompRect.x0, tuCompRect.y0 ),
                                                         m_pcQTTempTComYuv[uiQTTempAccessLayer].getStride(compID),
                                                         pcResi->getAddrPix( compID, tuCompRect.x0, tuCompRect.y0 ),
                                                         pcResi->getStride(compID),

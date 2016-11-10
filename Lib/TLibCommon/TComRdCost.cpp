@@ -42,6 +42,11 @@
 #include "TComRdCost.h"
 #include "TComTU.h"
 
+
+#include <opencv2/core/core.hpp>
+#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
+
 //! \ingroup TLibCommon
 //! \{
 
@@ -332,6 +337,8 @@ Distortion TComRdCost::calcHAD( Int bitDepth, const Pel* pi0, Int iStride0, cons
 
 Distortion TComRdCost::getDistPart( Int bitDepth, const Pel* piCur, Int iCurStride,  const Pel* piOrg, Int iOrgStride, UInt uiBlkWidth, UInt uiBlkHeight, const ComponentID compID, DFunc eDFunc )
 {
+  std::cerr << "WRONG!!!" << std::endl;
+  std::cout << "WRONG!!!" << std::endl;
   DistParam cDtParam;
   setDistParam( uiBlkWidth, uiBlkHeight, eDFunc, cDtParam );
   cDtParam.pOrg       = piOrg;
@@ -353,6 +360,58 @@ Distortion TComRdCost::getDistPart( Int bitDepth, const Pel* piCur, Int iCurStri
     return cDtParam.DistFunc( &cDtParam );
   }
 }
+
+#include "TLibEncoder/TEncPic.h"
+Distortion TComRdCost::getDistPart(const TComDataCU* pcCU, UInt uiX, UInt uiY, Int bitDepth, const Pel *piCur, Int iCurStride, const Pel *piOrg,
+                                   Int iOrgStride, UInt uiBlkWidth, UInt uiBlkHeight, const ComponentID compID,
+                                   DFunc eDFunc) {
+
+  if ( 0) { //show 2 block
+    cv::Mat img(cv::Size(uiBlkWidth, uiBlkHeight), CV_8UC1);
+    cv::Mat img2(cv::Size(uiBlkWidth, uiBlkHeight), CV_8UC1);
+    for (int i = 0; i < uiBlkHeight; i++) {
+      for (int j = 0; j < uiBlkWidth; j++) {
+        img.at<uchar>(i, j) = static_cast<uchar>(piOrg[i * iOrgStride + j]);
+        img2.at<uchar>(i, j) = static_cast<uchar>(piCur[i * iCurStride + j]);
+      }
+    }
+    cv::imshow("show", img);
+    cv::imshow("show2", img2);
+    cv::waitKey(0);
+  }
+  const TEncPic* pcEPic = dynamic_cast<const TEncPic*>( pcCU->getPic() );
+  Double saliency_factor;
+  if (compID != COMPONENT_Y) {
+    saliency_factor = pcEPic->getSaliencyFactor(uiX*2, uiY*2, uiBlkWidth*2, uiBlkHeight*2);
+  } else {
+    saliency_factor = pcEPic->getSaliencyFactor(uiX, uiY, uiBlkWidth, uiBlkHeight);
+  }
+  Double w = (saliency_factor*0.5 + 1) / 1.5;
+
+  DistParam cDtParam;
+  setDistParam( uiBlkWidth, uiBlkHeight, eDFunc, cDtParam );
+  cDtParam.pOrg       = piOrg;
+  cDtParam.pCur       = piCur;
+  cDtParam.iStrideOrg = iOrgStride;
+  cDtParam.iStrideCur = iCurStride;
+  cDtParam.iStep      = 1;
+
+  cDtParam.bApplyWeight = false;
+  cDtParam.compIdx      = MAX_NUM_COMPONENT; // just for assert: to be sure it was set before use
+  cDtParam.bitDepth     = bitDepth;
+
+  if (isChroma(compID))
+  {
+    return ((Distortion) (m_distortionWeight[compID] * cDtParam.DistFunc( &cDtParam ) * w));
+    //return ((Distortion) (m_distortionWeight[compID] * cDtParam.DistFunc( &cDtParam )));
+  }
+  else
+  {
+    return (Distortion)(cDtParam.DistFunc( &cDtParam ) * w);
+    //return ((Distortion)cDtParam.DistFunc( &cDtParam ));
+  }
+}
+
 
 Void TComRdCost::adjustLambdaForColourTrans(Int delta_QP, const BitDepths &bitDepths)
 {

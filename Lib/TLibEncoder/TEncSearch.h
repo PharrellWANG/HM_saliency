@@ -633,6 +633,7 @@ protected:
                                     Distortion& ruiCost );
 
   Distortion xGetTemplateCost    ( TComDataCU*  pcCU,
+                                    UInt        uiPartIdx,
                                     UInt        uiPartAddr,
                                     TComYuv*    pcOrgYuv,
                                     TComYuv*    pcTemplateCand,

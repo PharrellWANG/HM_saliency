@@ -40,6 +40,9 @@
 
 #include "TLibCommon/CommonDef.h"
 #include "TLibCommon/TComPic.h"
+#include <opencv2/core/core.hpp>
+#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
 
 //! \ingroup TLibEncoder
 //! \{
@@ -145,6 +148,8 @@ private:
   TEncPicQPAdaptationLayer* m_acAQLayer;
   TEncPicQPAdaptationSaliencyLayer* m_acAQSLayer;
   UInt                      m_uiMaxAQDepth;
+  cv::Mat                   m_saliency_map;
+  Double                    m_saliency_mean_val;
 
 public:
   TEncPic();
@@ -156,6 +161,9 @@ public:
   TEncPicQPAdaptationLayer* getAQLayer( UInt uiDepth )  { return &m_acAQLayer[uiDepth]; }
   TEncPicQPAdaptationSaliencyLayer* getAQSLayer( UInt uiDepth )  { return &m_acAQSLayer[uiDepth]; }
   UInt                      getMaxAQDepth()             { return m_uiMaxAQDepth;        }
+  cv::Mat*                  getSaliencyMap()            { return &m_saliency_map; }
+  Void                      updateSaliencyMeanVal()       { m_saliency_mean_val = cv::mean(m_saliency_map).val[0]; }
+  Double                    getSaliencyFactor(Int x, Int y, Int width, Int height) const;
 };
 
 //! \}

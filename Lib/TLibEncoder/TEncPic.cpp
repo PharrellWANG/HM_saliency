@@ -223,3 +223,9 @@ Void TEncPic::destroy()
 }
 //! \}
 
+
+Double TEncPic::getSaliencyFactor(Int x, Int y, Int width, Int height) const{
+  auto meanblk = cv::mean(m_saliency_map(cv::Rect(x/4, y/4, width/4, height/4))).val[0];
+  return (2*meanblk + m_saliency_mean_val) / (2*m_saliency_mean_val + meanblk);
+}
+

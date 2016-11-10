@@ -61,7 +61,7 @@ TEncPreanalyzer::TEncPreanalyzer()
  */
 TEncPreanalyzer::~TEncPreanalyzer()
 {
-    delete( m_psaliecy_net );
+//    delete( m_psaliecy_net );
 }
 
 /** Analyze source picture and compute local image characteristics used for QP adaptation
@@ -240,7 +240,7 @@ void TEncPreanalyzer::xComputeSaliency(TEncPic *pcEPic)
 
 void TEncPreanalyzer::xComputeSaliency(TEncPic *pcEPic, const std::string video_filename) {
     static const std::string sal_map_path = "/data/saliency_maps/";
-    std::string sal_map_filename = sal_map_path + video_filename + "/" + std::to_string(pcEPic->getPOC()+1) + ".png";
+    std::string sal_map_filename = sal_map_path + video_filename + "/" + std::to_string(pcEPic->getPOC()) + ".png";
     cv::Mat sal_map;
     sal_map = cv::imread(sal_map_filename, cv::IMREAD_GRAYSCALE);
     if (!sal_map.data) {
@@ -248,6 +248,9 @@ void TEncPreanalyzer::xComputeSaliency(TEncPic *pcEPic, const std::string video_
         assert(0);
         return;
     }
+    cv::resize(sal_map, *pcEPic->getSaliencyMap(), sal_map.size() / 4);
+    pcEPic->updateSaliencyMeanVal();
+
     TComPicYuv* pcPicYuv = pcEPic->getPicYuvOrg();
     const Int iWidth = pcPicYuv->getWidth(COMPONENT_Y);
     const Int iHeight = pcPicYuv->getHeight(COMPONENT_Y);
@@ -260,33 +263,12 @@ void TEncPreanalyzer::xComputeSaliency(TEncPic *pcEPic, const std::string video_
 
         Double dSumAct = 0.0;
         for (UInt y = 0; y < iHeight; y += uiAQPartHeight) {
-
             const UInt uiCurrAQPartHeight = min(uiAQPartHeight, iHeight - y);
             for (UInt x = 0; x < iWidth; x += uiAQPartWidth, pcAQU++) {
                 const UInt uiCurrAQPartWidth = min(uiAQPartWidth, iWidth - x);
-                //const Pel *pBlkY = &pLineY[x];
-
-                UInt64 uiSaliencySum = 0;
-                UInt64 uiSum[4] = {0, 0, 0, 0};
-                UInt64 uiSumSq[4] = {0, 0, 0, 0};
-                UInt by = 0;
-
-                for (; by < uiCurrAQPartHeight; by++) {
-                    const char* pLineY = sal_map.ptr<char>(y + by);
-                    const char *pBlkY = &pLineY[x];
-                    UInt bx = 0;
-                    for (; bx < uiCurrAQPartWidth; bx++) {
-                        uiSaliencySum += pBlkY[bx];
-                    }
-                }
-
                 assert ((uiCurrAQPartWidth & 1) == 0);
                 assert ((uiCurrAQPartHeight & 1) == 0);
-
-                const UInt numPixInAQPart = uiAQPartWidth * uiAQPartHeight;
-
-
-                const Double dActivity = uiSaliencySum / numPixInAQPart;
+                const Double dActivity = cv::mean(sal_map(cv::Rect(x, y, uiCurrAQPartWidth, uiCurrAQPartHeight))).val[0];
                 pcAQU->setActivity( dActivity);
                 dSumAct += dActivity;
             }
@@ -296,6 +278,7 @@ void TEncPreanalyzer::xComputeSaliency(TEncPic *pcEPic, const std::string video_
         pcAQSLayer->setAvgActivity(dAvgAct);
     }
 
-
+//    cv::imshow("show", sal_map);
+//    cv::waitKey(0);
 }
 

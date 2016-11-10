@@ -264,6 +264,7 @@ private:
 public:
 
   Distortion   getDistPart(Int bitDepth, const Pel* piCur, Int iCurStride, const Pel* piOrg, Int iOrgStride, UInt uiBlkWidth, UInt uiBlkHeight, const ComponentID compID, DFunc eDFunc = DF_SSE );
+  Distortion   getDistPart(const TComDataCU* pcCU, UInt uiX, UInt uiY, Int bitDepth, const Pel* piCur, Int iCurStride, const Pel* piOrg, Int iOrgStride, UInt uiBlkWidth, UInt uiBlkHeight, const ComponentID compID, DFunc eDFunc = DF_SSE );
 
   Bool      getRGBFormatFlag                  ()                 const { return m_bRGBformat;   } 
   Void      setRGBFormatFlag                  (const Bool value)       { m_bRGBformat = value;  } 
