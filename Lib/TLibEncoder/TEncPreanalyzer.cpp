@@ -248,7 +248,7 @@ void TEncPreanalyzer::xComputeSaliency(TEncPic *pcEPic, const std::string video_
         assert(0);
         return;
     }
-    cv::resize(sal_map, *pcEPic->getSaliencyMap(), sal_map.size() / 4);
+    cv::resize(sal_map, *pcEPic->getSaliencyMap(), cv::Size(sal_map.cols/4, sal_map.rows/4));
     pcEPic->updateSaliencyMeanVal();
 
     TComPicYuv* pcPicYuv = pcEPic->getPicYuvOrg();
