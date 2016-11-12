@@ -150,6 +150,7 @@ protected:
   Int       m_iMaxDeltaQP;                                    ///< max. |delta QP|
   UInt      m_uiDeltaQpRD;                                    ///< dQP range for multi-pass slice QP optimization
   Int       m_iMaxCuDQPDepth;                                 ///< Max. depth for a minimum CuDQPSize (0:default)
+
   Int       m_diffCuChromaQpOffsetDepth;                      ///< If negative, then do not apply chroma qp offsets.
   Bool      m_bFastDeltaQP;                                   ///< Fast Delta QP (false:default)
 
@@ -168,6 +169,7 @@ protected:
   Int       m_iQPAdaptationRange;                             ///< dQP range by QP adaptation
 
   Bool      m_bUseSaliencyQP;                                 ///< Flag for enabling QP adaptation based on a saliency model
+  Double    m_SaliencyFactor;
 
   Int       m_maxTempLayer;                                  ///< Max temporal layer
 

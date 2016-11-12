@@ -176,6 +176,7 @@ Void TAppEncTop::xInitLibCfg()
   m_cTEncTop.setUseAdaptiveQP                                     ( m_bUseAdaptiveQP  );
   m_cTEncTop.setQPAdaptationRange                                 ( m_iQPAdaptationRange );
   m_cTEncTop.setUseSaliencyQP                                     ( m_bUseSaliencyQP );
+  m_cTEncTop.setSaliencyFactor                                    ( m_SaliencyFactor );
   m_cTEncTop.setExtendedPrecisionProcessingFlag                   ( m_extendedPrecisionProcessingFlag );
   m_cTEncTop.setHighPrecisionOffsetsEnabledFlag                   ( m_highPrecisionOffsetsEnabledFlag );
   m_cTEncTop.setUseIntraBlockCopy                                 ( m_useIntraBlockCopy );

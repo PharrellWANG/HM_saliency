@@ -862,7 +862,9 @@ private:
   Bool             m_useAMP;
 
   // Parameter
+
   BitDepths        m_bitDepths;
+  Float            m_SaliencyFactor;
   Int              m_qpBDOffset[MAX_NUM_CHANNEL_TYPE];
   Int              m_pcmBitDepths[MAX_NUM_CHANNEL_TYPE];
   Bool             m_bPCMFilterDisableFlag;
@@ -988,6 +990,9 @@ public:
 #endif
   const BitDepths&       getBitDepths() const                                                            { return m_bitDepths;                                                  }
   Int                    getMaxLog2TrDynamicRange(ChannelType channelType) const                         { return getSpsRangeExtension().getExtendedPrecisionProcessingFlag() ? std::max<Int>(15, Int(m_bitDepths.recon[channelType] + 6)) : 15; }
+
+  Float                  getSaliencyFactor() const                                                       { return m_SaliencyFactor; }
+  Void                   setSaliencyFactor( Float f )                                                    { m_SaliencyFactor = f; }
 
   Int                    getDifferentialLumaChromaBitDepth() const                                       { return Int(m_bitDepths.recon[CHANNEL_TYPE_LUMA]) - Int(m_bitDepths.recon[CHANNEL_TYPE_CHROMA]); }
   Int                    getQpBDOffset(ChannelType type) const                                           { return m_qpBDOffset[type];                                           }

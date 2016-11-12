@@ -339,7 +339,7 @@ Void TEncTop::encode( Bool flush, TComPicYuv* pcPicYuvOrg, TComPicYuv* pcPicYuvT
     {
       m_cPreanalyzer.xPreanalyze( dynamic_cast<TEncPic*>( pcPicCurr ) );
     }
-    if ( getUseSaliencyQP() )
+    if ( getUseSaliencyQP() || 1)
     {
       m_cPreanalyzer.xComputeSaliency( dynamic_cast<TEncPic*>( pcPicCurr ), m_inputFileName );
     }
@@ -454,7 +454,7 @@ Void TEncTop::encode(Bool flush, TComPicYuv* pcPicYuvOrg, TComPicYuv* pcPicYuvTr
       {
         m_cPreanalyzer.xPreanalyze( dynamic_cast<TEncPic*>( pcField ) );
       }
-      if ( getUseSaliencyQP() )
+      if ( getUseSaliencyQP() || 1)
       {
         m_cPreanalyzer.xComputeSaliency( dynamic_cast<TEncPic*>( pcField ), m_inputFileName);
       }
@@ -505,7 +505,7 @@ Void TEncTop::xGetNewPicBuffer ( TComPic*& rpcPic )
   }
   else
   {
-    if ( getUseAdaptiveQP() || getUseSaliencyQP())
+    if ( getUseAdaptiveQP() || getUseSaliencyQP() || 1)
     {
       TEncPic* pcEPic = new TEncPic;
       pcEPic->create( m_cSPS,
@@ -515,7 +515,7 @@ Void TEncTop::xGetNewPicBuffer ( TComPic*& rpcPic )
                       m_cSPS.getSpsScreenExtension().getPLTMaxPredSize(),
                       false,
                       getUseAdaptiveQP(),
-                      getUseSaliencyQP());
+                      getUseSaliencyQP() || 1);
       rpcPic = pcEPic;
     }
     else
@@ -610,6 +610,7 @@ Void TEncTop::xInitSPS()
     log2MinCUSize++;
   }
 
+  m_cSPS.setSaliencyFactor(m_SaliencyFactor);
   m_cSPS.setLog2MinCodingBlockSize(log2MinCUSize);
 
   m_cSPS.setPCMLog2MinSize (m_uiPCMLog2MinSize);
@@ -896,7 +897,7 @@ Void TEncTop::xInitPPS()
   m_cPPS.setConstrainedIntraPred( m_bUseConstrainedIntraPred );
   Bool bUseDQP = (getMaxCuDQPDepth() > 0)? true : false;
 
-  if((getMaxDeltaQP() != 0 )|| getUseAdaptiveQP() || getUseSaliencyQP())
+  if((getMaxDeltaQP() != 0 )|| getUseAdaptiveQP() || getUseSaliencyQP() || 1)
   {
     bUseDQP = true;
   }

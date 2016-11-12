@@ -799,6 +799,7 @@ Bool TAppEncCfg::parseCfg( Int argc, TChar* argv[] )
   ("AdaptiveQP,-aq",                                  m_bUseAdaptiveQP,                                 false, "QP adaptation based on a psycho-visual model")
   ("MaxQPAdaptationRange,-aqr",                       m_iQPAdaptationRange,                                 6, "QP adaptation range")
   ("SaliencyQP,-sq",                                  m_bUseSaliencyQP,                                 false, "QP adaptation based on a saliency model")
+  ("SaliencyFactor,-sf",                              m_SaliencyFactor,                                   0.0, "Saliency Factor used in RD cost")
   ("dQPFile,m",                                       m_dQPFileName,                               string(""), "dQP file name")
   ("RDOQ",                                            m_useRDOQ,                                         true)
   ("RDOQTS",                                          m_useRDOQTS,                                       true)
@@ -2553,8 +2554,9 @@ Void TAppEncCfg::xPrintParameter()
 
   printf("Cb QP Offset                           : %d\n", m_cbQpOffset   );
   printf("Cr QP Offset                           : %d\n", m_crQpOffset);
-  printf("QP adaptation                          : %d (range=%d)\n", m_bUseAdaptiveQP, (m_bUseAdaptiveQP ? m_iQPAdaptationRange : 0) );
+  printf("QP adaptation                          : %d (range=%d)\n", m_bUseAdaptiveQP, (m_bUseAdaptiveQP || m_bUseSaliencyQP ? m_iQPAdaptationRange : 0) );
   printf("QP adaptation based on saliency        : %d \n", m_bUseSaliencyQP);
+  printf("Saliency Factor                        : %.2f \n", m_SaliencyFactor);
   printf("GOP size                               : %d\n", m_iGOPSize );
   printf("Input bit depth                        : (Y:%d, C:%d)\n", m_inputBitDepth[CHANNEL_TYPE_LUMA], m_inputBitDepth[CHANNEL_TYPE_CHROMA] );
   printf("MSB-extended bit depth                 : (Y:%d, C:%d)\n", m_MSBExtendedBitDepth[CHANNEL_TYPE_LUMA], m_MSBExtendedBitDepth[CHANNEL_TYPE_CHROMA] );

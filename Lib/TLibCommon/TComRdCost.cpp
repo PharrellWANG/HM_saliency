@@ -380,13 +380,16 @@ Distortion TComRdCost::getDistPart(const TComDataCU* pcCU, UInt uiX, UInt uiY, I
     cv::waitKey(0);
   }
   const TEncPic* pcEPic = dynamic_cast<const TEncPic*>( pcCU->getPic() );
-  Double saliency_factor;
+
+  Float saliency_factor = pcCU->getSlice()->getSPS()->getSaliencyFactor();
+  Double saliency_weight;
   if (compID != COMPONENT_Y) {
-    saliency_factor = pcEPic->getSaliencyFactor(uiX*2, uiY*2, uiBlkWidth*2, uiBlkHeight*2);
+    saliency_weight = pcEPic->getSaliencyFactor(uiX*2, uiY*2, uiBlkWidth*2, uiBlkHeight*2);
   } else {
-    saliency_factor = pcEPic->getSaliencyFactor(uiX, uiY, uiBlkWidth, uiBlkHeight);
+    saliency_weight = pcEPic->getSaliencyFactor(uiX, uiY, uiBlkWidth, uiBlkHeight);
   }
-  Double w = (saliency_factor*0.5 + 1) / 1.5;
+  Double w = (saliency_weight*saliency_factor + 1) / (1 + saliency_factor);
+
 
   DistParam cDtParam;
   setDistParam( uiBlkWidth, uiBlkHeight, eDFunc, cDtParam );

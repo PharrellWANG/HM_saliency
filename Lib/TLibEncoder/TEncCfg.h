@@ -212,6 +212,7 @@ protected:
   Bool      m_bUseAdaptiveQP;
   Int       m_iQPAdaptationRange;
   Bool      m_bUseSaliencyQP;
+  Float     m_SaliencyFactor;
 
   //====== Tool list ========
   Int       m_bitDepth[MAX_NUM_CHANNEL_TYPE];
@@ -553,6 +554,7 @@ public:
   Void      setQPAdaptationRange            ( Int   i )      { m_iQPAdaptationRange = i; }
 
   Void      setUseSaliencyQP                ( Bool  b )      { m_bUseSaliencyQP = b; }
+  Void      setSaliencyFactor               ( Float f )      { m_SaliencyFactor = f; }
 
   //====== Sequence ========
   Int       getFrameRate                    ()      { return  m_iFrameRate; }
@@ -615,6 +617,7 @@ public:
   Bool      getUseAdaptiveQP                ()      { return  m_bUseAdaptiveQP; }
   Int       getQPAdaptationRange            ()      { return  m_iQPAdaptationRange; }
   Bool      getUseSaliencyQP                ()      { return  m_bUseSaliencyQP; }
+  Float     getSaliencyFactor               ()      { return  m_SaliencyFactor; }
 
   //==== Tool list ========
   Void      setBitDepth( const ChannelType chType, Int internalBitDepthForChannel ) { m_bitDepth[chType] = internalBitDepthForChannel; }
